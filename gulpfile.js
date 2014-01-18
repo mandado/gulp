@@ -1,4 +1,21 @@
-/**
+/************
+* Tasks: gulp ...
+*
+* jade -> Compile and minify .jade
+* stylus -> Compile and minify main.styl
+* scripts -> Concat and uglify .js
+* minify-html -> compress html, remove comments and empty attributes
+* minify-img -> optimize png/gif/jpg
+* font -> svg to ttf | tff to eot | ttf to woff
+* fpt -> transfer files to the server 
+* server -> Creates a web server
+* build -> Compile jade/stylus/scripts | optimize images | convert fonts
+* default -> Compile jade/stylus/scripts
+*
+* ♥
+*/
+
+/************
 * Dependencies
 */
 var gulp = require('gulp'),
@@ -13,30 +30,35 @@ var gulp = require('gulp'),
 	ttf2woff = require('gulp-ttf2woff'),
 	minifyHTML = require('gulp-minify-html'),
 	imagemin = require('gulp-imagemin'),
+	ftp = require('gulp-ftp');
 	express = require('express');
-
-/**
+	
+/************
 * Conf. express
 *
 * 1# Port that will run express
 * 2# The build folder
 * 3# Show hidden files
 * 4# Show icons
+*
+* https://npmjs.org/package/express
 */
 	var ConfExpress = {
 		port: 8080,
-		folder: './build',
+		folder: 'build/',
 		showHiddenFiles: false,
 		icons: true,
 	};
 
-/**
+/************
 * Conf. Jade
 *
 * #1 Task name
-* #2
-* #3
+* #2 Input Folder
+* #3 Output Folder
 * #4 html format
+*
+* https://npmjs.org/package/gulp-jade
 */
 	var ConfJade = {
 		taskName: 'jade',
@@ -45,13 +67,15 @@ var gulp = require('gulp'),
 		pretty: false
 	}
 
-/**
+/************
 * Conf. Stylus
 *
 * #1 Task name
 * #2 Input Folder
 * #3 Output folder
 * #4 Output minify name 
+*
+* https://npmjs.org/package/gulp-stylus
 */
 	var ConfStylus = {
 		taskName: 'stylus',
@@ -60,13 +84,16 @@ var gulp = require('gulp'),
 		minifyName: 'main.min'
 	}
 
-/**
+/************
 * Conf. Javascript
 *
 * 1# The task name
 * 2# 
 * 3#
 * 4#
+*
+* https://npmjs.org/package/gulp-concat
+* https://npmjs.org/package/gulp-uglify
 */
 	var ConfJS = {
 		taskName: 'scripts',
@@ -75,7 +102,7 @@ var gulp = require('gulp'),
 		minifyName: 'main.min.js'
 	}
 
-/**
+/************
 * Conf. HTML
 *
 * #1 The task name
@@ -92,34 +119,51 @@ var gulp = require('gulp'),
 		comments: false
 
 	}
-/**
+
+/************
 * Conf. Image
 *
-*
+* https://npmjs.org/package/gulp-imagemin
 */
 	var ConfIMG = {
 		taskname: 'minify-img',
 		inputFolder: './dev/image/**/*',
 		outputFolder: './build/app/image/'
 	}
-/**
+
+/************
 * Conf. fonts
 *
-* #1
+* #1 
 * #2
-* #3
+*
+* https://npmjs.org/package/gulp-svg2ttf
+* https://npmjs.org/package/gulp-ttf2eot
+* https://npmjs.org/package/gulp-ttf2woff
 */
 	var ConfFont = {
-		taskName: 'fonts',
+		taskName: 'font',
 		folder: './dev/app/font/*'
 	}
 
-/**
+/************
+* Conf Ftp
+*
+* https://npmjs.org/package/gulp-ftp
+*/
+	var ConfFTP = {
+            host: '',
+            user: '',
+            pass: '',
+            remotePath: '/'
+        }
+
+/************
 * Tasks
 */
 
 /**
-* about jade
+* jade
 */
 gulp.task(ConfJade.taskName, function() {
 	gulp.src(ConfJade.inputFolder + '.jade')
@@ -128,7 +172,7 @@ gulp.task(ConfJade.taskName, function() {
 });
 
 /**
-* about css
+* stylus
 */
 gulp.task(ConfStylus.taskName, function() {
 	gulp.src(ConfStylus.inputFolder + '.styl')
@@ -138,7 +182,7 @@ gulp.task(ConfStylus.taskName, function() {
 });
 
 /**
-* about scripts
+* scripts
 */
 gulp.task(ConfJS.taskName, function() {
 	gulp.src(ConfJS.inputFolder + '.js')
@@ -148,7 +192,7 @@ gulp.task(ConfJS.taskName, function() {
 });
 
 /**
-* about html
+* html
 */
 gulp.task(ConfHTML.taskName, function() {
 	gulp.src(ConfHTML.inputFolder + '.html')
@@ -157,7 +201,7 @@ gulp.task(ConfHTML.taskName, function() {
 })
 
 /**
-* about image
+* image
 */
 gulp.task(ConfIMG.taskname, function () {
     gulp.src([ConfIMG.inputFolder + '.png', ConfIMG.inputFolder + '.jpg', ConfIMG.inputFolder + '.gif'])
@@ -166,26 +210,30 @@ gulp.task(ConfIMG.taskname, function () {
 });
 
 /**
-* about fonts
-*
-* #1 Convert svg to tff
-* #2 Convert tff to eot
-* #3 Convert ttf to woff
+* fonts
 */
 gulp.task(ConfFont.taskName, function() {
 	gulp.src([ConfFont.folder + '.svg'])
-    	.pipe(svg2ttf())
-    	.pipe(gulp.dest(ConfFont.folder));
+    		.pipe(svg2ttf())
+    		.pipe(gulp.dest(ConfFont.folder));
    	gulp.src([ConfFont.folder +'.ttf'])
-    	.pipe(ttf2eot())
-    	.pipe(gulp.dest(ConfFont.folder));
-    gulp.src([ConfFont.folder + '.ttf'])
-    	.pipe(ttf2woff())
-    	.pipe(gulp.dest(ConfFont.folder));
+    		.pipe(ttf2eot())
+    		.pipe(gulp.dest(ConfFont.folder));
+	gulp.src([ConfFont.folder + '.ttf'])
+    		.pipe(ttf2woff())
+    		.pipe(gulp.dest(ConfFont.folder));
 });
 
 /**
-* gulp server
+* ftp
+*/
+gulp.task('ftp', function() {
+	gulp.src('./dev/*')
+        	.pipe(ftp(ConfFTP));
+})
+
+/**
+* server
 */
 gulp.task('server', function() {
 	var app = express();
@@ -198,7 +246,7 @@ gulp.task('server', function() {
 });
 
 /**
-* gulp build
+* build
 */
 gulp.task('build', function() {
 	gulp.run(ConfJade.taskName, ConfJS.taskName, ConfStylus.taskName, ConfIMG.taskname, ConfFont.taskName);
