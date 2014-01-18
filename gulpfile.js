@@ -58,8 +58,7 @@ var gulp = require('gulp'),
 *		   '' -> No browser
 */
 	var ConfBrowser = {
-		path: 'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe',
-
+		path: 'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe'
 	}
 
 /************
@@ -175,13 +174,13 @@ var gulp = require('gulp'),
 * https://npmjs.org/package/gulp-ftp
 */
 	var ConfFTP = {
-	    taskName: 'ftp',
+			taskName: 'ftp',
             host: '',
             user: '',
             pass: '',
             remotePath: '/',
             inputFolder: './build/*'
-        }
+	}
 
 /************
 * All Tasks
