@@ -17,5 +17,3 @@ Task: gulp ...
 * build -> Compile jade/stylus/scripts | optimize images | convert fonts
 
 * default task -> Compile jade/stylus/scripts and run server
-
-♥
