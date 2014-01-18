@@ -8,9 +8,11 @@
 * minify-img -> optimize png/gif/jpg
 * font -> svg to ttf | tff to eot | ttf to woff
 * fpt -> transfer files to the server
+*
 * watch -> Watch jade/stylus/scripts
 * server -> Creates a web server | Watch files
 * build -> Compile jade/stylus/scripts | optimize images | convert fonts
+*
 * default task -> Compile jade/stylus/scripts and run server
 */
 
@@ -29,8 +31,9 @@ var gulp = require('gulp'),
 	ttf2eot = require('gulp-ttf2eot'),
 	ttf2woff = require('gulp-ttf2woff'),
 	imagemin = require('gulp-imagemin'),
-	ftp = require('gulp-ftp');
-	express = require('express');
+	ftp = require('gulp-ftp'),
+	express = require('express'),
+	Conf = {};
 
 /************
 * Conf. express
@@ -40,9 +43,9 @@ var gulp = require('gulp'),
 * 3# Show hidden files
 * 4# Show icons
 *
-* https://npmjs.org/package/express
+* About express: https://npmjs.org/package/express
 */
-	var ConfExpress = {
+	Conf.ConfServer = {
 		port: 8080,
 		folder: '/build',
 		showHiddenFiles: false,
@@ -56,7 +59,7 @@ var gulp = require('gulp'),
 *		   C:\\Program Files (x86)\\Mozilla Firefox\\firefox.exe
 *		   '' -> No browser
 */
-	var ConfBrowser = {
+	Conf.ConfBrowser = {
 		path: 'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe'
 	}
 
@@ -68,9 +71,10 @@ var gulp = require('gulp'),
 * #3 Output Folder
 * #4 html format
 *
-* https://npmjs.org/package/gulp-jade
+* about Jade: http://jade-lang.com/api/
+* about module: https://npmjs.org/package/gulp-jade
 */
-	var ConfJade = {
+	Conf.ConfJade = {
 		taskName: 'jade',
 		inputFolder: './dev/jade/*',
 		outputFolder: './build/',
@@ -85,9 +89,10 @@ var gulp = require('gulp'),
 * #3 Output folder
 * #4 Output minify name 
 *
-* https://npmjs.org/package/gulp-stylus
+* about stylus: http://learnboost.github.io/stylus/
+* about module: https://npmjs.org/package/gulp-stylus
 */
-	var ConfStylus = {
+	Conf.ConfStylus = {
 		taskName: 'stylus',
 		inputFolder: './dev/stylus/main',
 		outputFolder: './build/app/css/',
@@ -102,10 +107,10 @@ var gulp = require('gulp'),
 * #3 Output folder
 * 4# Output minify name
 *
-* https://npmjs.org/package/gulp-concat
-* https://npmjs.org/package/gulp-uglify
+* about concat: https://npmjs.org/package/gulp-concat
+* about: uglify: https://npmjs.org/package/gulp-uglify
 */
-	var ConfJS = {
+	Conf.ConfJS = {
 		taskName: 'scripts',
 		inputFolder: './dev/js/**/*',
 		outputFolder: './build/app/js/',
@@ -121,9 +126,9 @@ var gulp = require('gulp'),
 * #4 false: remove empty attributes
 * #5 false: remove comments
 *
-* https://npmjs.org/package/gulp-minify-html
+* about minify html: https://npmjs.org/package/gulp-minify-html
 */
-	var ConfHTML = {
+	Conf.ConfHTML = {
 		taskName: 'minify-html',
 		inputFolder: './build/*',
 		outputFolder: './build/',
@@ -135,11 +140,12 @@ var gulp = require('gulp'),
 * Conf. Image
 *
 * #1 Task name
+* #2 Input folder 
+* #3 Output folder
 *
-*
-* https://npmjs.org/package/gulp-imagemin
+* about imagemin: https://npmjs.org/package/gulp-imagemin
 */
-	var ConfIMG = {
+	Conf.ConfIMG = {
 		taskname: 'minify-img',
 		inputFolder: './dev/image/**/*',
 		outputFolder: './build/app/image/'
@@ -152,11 +158,11 @@ var gulp = require('gulp'),
 * #2 Input Folder
 * #3 Output Folder
 *
-* https://npmjs.org/package/gulp-svg2ttf
-* https://npmjs.org/package/gulp-ttf2eot
-* https://npmjs.org/package/gulp-ttf2woff
+* about svg2ttf: https://npmjs.org/package/gulp-svg2ttf
+* about ttf2eot: abhttps://npmjs.org/package/gulp-ttf2eot
+* about ttf2woff: https://npmjs.org/package/gulp-ttf2woff
 */
-	var ConfFont = {
+	Conf.ConfFont = {
 		taskName: 'font',
 		inputFolder: './dev/app/font/*',
 		outputFolder: './dev/app/font/'
@@ -170,15 +176,16 @@ var gulp = require('gulp'),
 * #3 USR
 * #4 PASS
 * #5 Folder to be accessed
-* https://npmjs.org/package/gulp-ftp
+* 
+* about ftp: https://npmjs.org/package/gulp-ftp
 */
-	var ConfFTP = {
-			taskName: 'ftp',
-            host: '',
-            user: '',
-            pass: '',
-            remotePath: '/',
-            inputFolder: './build/*'
+	Conf.ConfFTP = {
+		taskName: 'ftp',
+		host: '',
+		user: '',
+		pass: '',
+		remotePath: '/',
+		inputFolder: './build/*'
 	}
 
 /************
@@ -188,87 +195,87 @@ var gulp = require('gulp'),
 /**
 * jade
 */
-gulp.task(ConfJade.taskName, function() {
-	gulp.src(ConfJade.inputFolder + '.jade')
-		.pipe(jade(ConfJade))
-		.pipe(gulp.dest(ConfJade.outputFolder));
+gulp.task(Conf.ConfJade.taskName, function() {
+	gulp.src(Conf.ConfJade.inputFolder + '.jade')
+		.pipe(jade(Conf.ConfJade))
+		.pipe(gulp.dest(Conf.ConfJade.outputFolder));
 });
 
 /**
 * stylus
 */
-gulp.task(ConfStylus.taskName, function() {
-	gulp.src(ConfStylus.inputFolder + '.styl')
+gulp.task(Conf.ConfStylus.taskName, function() {
+	gulp.src(Conf.ConfStylus.inputFolder + '.styl')
 		.pipe(stylus())
 		.pipe(minifyCSS())
-		.pipe(gulp.dest(ConfStylus.outputFolder))
+		.pipe(gulp.dest(Conf.ConfStylus.outputFolder));
 });
 
 /**
 * scripts
 */
-gulp.task(ConfJS.taskName, function() {
-	gulp.src(ConfJS.inputFolder + '.js')
-		.pipe(concat(ConfJS.minifyName))
+gulp.task(Conf.ConfJS.taskName, function() {
+	gulp.src(Conf.ConfJS.inputFolder + '.js')
+		.pipe(concat(Conf.ConfJS.minifyName))
 		.pipe(uglify())
-		.pipe(gulp.dest(ConfJS.outputFolder));
+		.pipe(gulp.dest(Conf.ConfJS.outputFolder));
 });
 
 /**
 * html
 */
-gulp.task(ConfHTML.taskName, function() {
-	gulp.src(ConfHTML.inputFolder + '.html')
-		.pipe(minifyHTML(ConfHTML))
-		.pipe(gulp.dest(ConfHTML.outputFolder))
-})
+gulp.task(Conf.ConfHTML.taskName, function() {
+	gulp.src(Conf.ConfHTML.inputFolder + '.html')
+		.pipe(minifyHTML(Conf.ConfHTML))
+		.pipe(gulp.dest(Conf.ConfHTML.outputFolder));
+});
 
 /**
 * image
 */
-gulp.task(ConfIMG.taskname, function () {
-	gulp.src([ConfIMG.inputFolder + '.png', ConfIMG.inputFolder + '.jpg', ConfIMG.inputFolder + '.gif'])
+gulp.task(Conf.ConfIMG.taskname, function () {
+	gulp.src([Conf.ConfIMG.inputFolder + '.png', Conf.ConfIMG.inputFolder + '.jpg', Conf.ConfIMG.inputFolder + '.gif'])
         	.pipe(imagemin())
-        	.pipe(gulp.dest(ConfIMG.outputFolder));
+        	.pipe(gulp.dest(Conf.ConfIMG.outputFolder));
 });
 
 /**
 * font
 */
-gulp.task(ConfFont.taskName, function() {
-	gulp.src([ConfFont.inputFolder + '.svg'])
+gulp.task(Conf.ConfFont.taskName, function() {
+	gulp.src([Conf.ConfFont.inputFolder + '.svg'])
     		.pipe(svg2ttf())
-    		.pipe(gulp.dest(ConfFont.folder));
-   	gulp.src([ConfFont.inputFolder +'.ttf'])
+    		.pipe(gulp.dest(Conf.ConfFont.folder));
+   	gulp.src([Conf.ConfFont.inputFolder +'.ttf'])
     		.pipe(ttf2eot())
-    		.pipe(gulp.dest(ConfFont.folder));
-	gulp.src([ConfFont.inputFolder + '.ttf'])
+    		.pipe(gulp.dest(Conf.ConfFont.folder));
+	gulp.src([Conf.ConfFont.inputFolder + '.ttf'])
     		.pipe(ttf2woff())
-    		.pipe(gulp.dest(ConfFont.outputFolder));
+    		.pipe(gulp.dest(Conf.ConfFont.outputFolder));
 });
 
 /**
 * ftp
 */
-gulp.task(ConfFTP.taskName, function() {
-	gulp.src(ConfFTP.inputFolder)
-        	.pipe(ftp(ConfFTP));
+gulp.task(Conf.ConfFTP.taskName, function() {
+	gulp.src(Conf.ConfFTP.inputFolder)
+        	.pipe(ftp(Conf.ConfFTP));
 });
 
 /**
 * watch
 */
 gulp.task('watch', function() {
-	gulp.watch(ConfJade.inputFolder, function() {
-		gulp.run(ConfJade.taskName);
+	gulp.watch(Conf.ConfJade.inputFolder, function() {
+		gulp.run(Conf.ConfJade.taskName);
 	});
-	gulp.watch(ConfStylus.inputFolder + '.styl', function() {
-		gulp.run(ConfStylus.taskName);
+	gulp.watch(Conf.ConfStylus.inputFolder + '.styl', function() {
+		gulp.run(Conf.ConfStylus.taskName);
 	});
-	gulp.watch(ConfJS.inputFolder, function() {
-		gulp.run(ConfJS.taskName);
+	gulp.watch(Conf.ConfJS.inputFolder, function() {
+		gulp.run(Conf.ConfJS.taskName);
 	});
-	console.log('Gulp is watching!');
+	gutil.log('Is watching!');
 });
 
 /**
@@ -280,37 +287,37 @@ gulp.task('server', function() {
 	    browser;
 
 	app.configure(function() {
-	    app.use(express.static(__dirname + ConfExpress.folder));
-	    app.use(express.directory(__dirname + ConfExpress.folder, {hidden: ConfExpress.showHiddenFiles, icons: ConfExpress.icons, filter:false}));
+	    app.use(express.static(__dirname + Conf.ConfServer.folder));
+	    app.use(express.directory(__dirname + Conf.ConfServer.folder, {hidden: Conf.ConfServer.showHiddenFiles, icons: Conf.ConfServer.icons, filter:false}));
 	    app.use(express.errorHandler());
 	});
-	app.listen(ConfExpress.port);
-	if (typeof(ConfBrowser.path) != undefined && ConfBrowser.path != '' && ConfBrowser.path != "") {
+	app.listen(Conf.ConfServer.port);
+	if (typeof(Conf.ConfBrowser.path) != undefined && Conf.ConfBrowser.path != '' && Conf.ConfBrowser.path != "") {
 		cp = require('child_process');
-		browser = cp.spawn(ConfBrowser.path, ['-new-tab', 'http://localhost:' + ConfExpress.port + '/']);
+		browser = cp.spawn(Conf.ConfBrowser.path, ['-new-tab', 'http://localhost:' + Conf.ConfServer.port + '/']);
 	}
 	gulp.run('watch');
-	console.log('Server is running at port ' + ConfExpress.port);
+	gutil.log('Server is running at port ' + Conf.ConfServer.port);
 });
 
 /**
 * build
 */
 gulp.task('build', function() {
-	gulp.run(ConfJade.taskName, ConfJS.taskName, ConfStylus.taskName, ConfIMG.taskname, ConfFont.taskName);
-	console.log('Build Complete!');
+	gulp.run(Conf.ConfJade.taskName, Conf.ConfJS.taskName, Conf.ConfStylus.taskName, Conf.ConfIMG.taskname, Conf.ConfFont.taskName);
+	gutil.log('Build Complete!');
 });
 
 /**
 * help
 */
 gulp.task('help', function() {
-	console.log('Task: gulp.. \njade -> Compile and minify .jade \nstylus -> Compile and minify main.styl \nscripts -> Concat and uglify .js\nminify-html -> compress html, remove comments and empty attributes\nminify-img -> optimize png/gif/jpg\nfont -> svg to ttf | tff to eot | ttf to woff\nfpt -> transfer files to the server\nserver -> Creates a web server\nbuild -> Compile jade/stylus/scripts | optimize images | convert fonts\ndefault task -> Compile jade/stylus/scripts and run server');
+	gutil.log('Task: gulp.. \njade -> Compile and minify .jade \nstylus -> Compile and minify main.styl \nscripts -> Concat and uglify .js\nminify-html -> compress html, remove comments and empty attributes\nminify-img -> optimize png/gif/jpg\nfont -> svg to ttf | tff to eot | ttf to woff\nfpt -> transfer files to the server\nserver -> Creates a web server\nbuild -> Compile jade/stylus/scripts | optimize images | convert fonts\ndefault task -> Compile jade/stylus/scripts and run server');
 });
 
 /**
 * default
 */
 gulp.task('default', function() {
-	gulp.run(ConfJade.taskName, ConfJS.taskName, ConfStylus.taskName, ConfFont.taskName,'server');
+	gulp.run(Conf.ConfJade.taskName, Conf.ConfJS.taskName, Conf.ConfStylus.taskName, Conf.ConfFont.taskName,'server');
 });
