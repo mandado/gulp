@@ -3,9 +3,9 @@ Gulp Helper
 
 An initial configuration for your project with gulp
 
-/************
-* Task: gulp ...
-*
+
+Task: gulp ...
+
 * jade -> Compile and minify .jade
 * stylus -> Compile and minify main.styl
 * scripts -> Concat and uglify .js
@@ -15,8 +15,7 @@ An initial configuration for your project with gulp
 * fpt -> transfer files to the server 
 * server -> Creates a web server
 * build -> Compile jade/stylus/scripts | optimize images | convert fonts
-*
+
 * default task -> Compile jade/stylus/scripts and run server
-*
-* ♥
-*/
+
+♥
