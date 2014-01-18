@@ -175,7 +175,7 @@ var gulp = require('gulp'),
 * https://npmjs.org/package/gulp-ftp
 */
 	var ConfFTP = {
-			taskName: 'ftp',
+	    taskName: 'ftp',
             host: '',
             user: '',
             pass: '',
