@@ -1,6 +1,7 @@
 Gulp Helper
 ====
-![alt tag](http://s27.postimg.org/6tjp5u05v/gulp.png)
+![alt tag](http://postimg.org/image/e98ee0uah/845ad251/)
+
 An initial configuration for your project with gulp
 
 
