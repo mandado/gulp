@@ -11,9 +11,8 @@
 * server -> Creates a web server
 * build -> Compile jade/stylus/scripts | optimize images | convert fonts
 *
-* default task -> Compile jade/stylus/scripts
+* default task -> Compile jade/stylus/scripts and run server
 *
-* ♥
 */
 
 /************
@@ -26,10 +25,10 @@ var gulp = require('gulp'),
 	jade = require('gulp-jade'),
 	stylus = require('gulp-stylus'),
 	minifyCSS = require('gulp-minify-css'),
+	minifyHTML = require('gulp-minify-html'),
 	svg2ttf = require('gulp-svg2ttf'),
 	ttf2eot = require('gulp-ttf2eot'),
 	ttf2woff = require('gulp-ttf2woff'),
-	minifyHTML = require('gulp-minify-html'),
 	imagemin = require('gulp-imagemin'),
 	ftp = require('gulp-ftp');
 	express = require('express');
@@ -54,8 +53,9 @@ var gulp = require('gulp'),
 /************
 * Conf your browser
 * #1 The path of your browser | Remember to escape characters
-*	exemple: C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe
-*			 C:\\Program Files (x86)\\Mozilla Firefox\\firefox.exe
+* exemple: C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe
+*		   C:\\Program Files (x86)\\Mozilla Firefox\\firefox.exe
+*		   '' -> No browser
 */
 	var ConfBrowser = {
 		path: 'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe',
@@ -99,10 +99,10 @@ var gulp = require('gulp'),
 /************
 * Conf. Javascript
 *
-* 1# The task name
-* 2# 
-* 3#
-* 4#
+* 1# Task name
+* #2 Input Folder
+* #3 Output folder
+* 4# Output minify name
 *
 * https://npmjs.org/package/gulp-concat
 * https://npmjs.org/package/gulp-uglify
@@ -117,9 +117,11 @@ var gulp = require('gulp'),
 /************
 * Conf. HTML
 *
-* #1 The task name
-* #2 false: remove empty attributes
-* #3 false: remove comments
+* #1 Task name
+* #2 Input folder
+* #3 Output folder
+* #4 false: remove empty attributes
+* #5 false: remove comments
 *
 * https://npmjs.org/package/gulp-minify-html
 */
@@ -129,11 +131,13 @@ var gulp = require('gulp'),
 		outputFolder: './build/',
 		empty: false,
 		comments: false
-
 	}
 
 /************
 * Conf. Image
+*
+* #1 Task name
+*
 *
 * https://npmjs.org/package/gulp-imagemin
 */
@@ -147,7 +151,8 @@ var gulp = require('gulp'),
 * Conf. fonts
 *
 * #1 Task name
-* #2 Font folder
+* #2 Input Folder
+* #3 Output Folder
 *
 * https://npmjs.org/package/gulp-svg2ttf
 * https://npmjs.org/package/gulp-ttf2eot
@@ -155,27 +160,31 @@ var gulp = require('gulp'),
 */
 	var ConfFont = {
 		taskName: 'font',
-		folder: './dev/app/font/*'
+		inputFolder: './dev/app/font/*',
+		outputFolder: './dev/app/font/'
 	}
 
 /************
 * Conf Ftp
 *
-* #1 Host
-* #2 USR
-* #3 PASS
-* #4 Folder to be accessed
+* #1 Task name
+* #2 FTP Host
+* #3 USR
+* #4 PASS
+* #5 Folder to be accessed
 * https://npmjs.org/package/gulp-ftp
 */
 	var ConfFTP = {
+			taskName: 'ftp',
             host: '',
             user: '',
             pass: '',
             remotePath: '/'
+            inputFolder: './build/*'
         }
 
 /************
-* Tasks
+* All Tasks
 */
 
 /**
@@ -229,22 +238,22 @@ gulp.task(ConfIMG.taskname, function () {
 * font
 */
 gulp.task(ConfFont.taskName, function() {
-	gulp.src([ConfFont.folder + '.svg'])
+	gulp.src([ConfFont.inputFolder + '.svg'])
     	.pipe(svg2ttf())
     	.pipe(gulp.dest(ConfFont.folder));
-   	gulp.src([ConfFont.folder +'.ttf'])
+   	gulp.src([ConfFont.inputFolder +'.ttf'])
     	.pipe(ttf2eot())
     	.pipe(gulp.dest(ConfFont.folder));
-    gulp.src([ConfFont.folder + '.ttf'])
+    gulp.src([ConfFont.inputFolder + '.ttf'])
     	.pipe(ttf2woff())
-    	.pipe(gulp.dest(ConfFont.folder));
+    	.pipe(gulp.dest(ConfFont.outputFolder));
 });
 
 /**
 * ftp
 */
-gulp.task('ftp', function() {
-	gulp.src('./dev/*')
+gulp.task(ConfFTP.taskName, function() {
+	gulp.src(ConfFTP.inputFolder)
         .pipe(ftp(ConfFTP));
 })
 
@@ -253,7 +262,7 @@ gulp.task('ftp', function() {
 */
 gulp.task('server', function() {
 	var app = express(),
-		cp = require('child_process'),
+		cp,
 		browser;
 
 	app.configure(function() {
@@ -263,6 +272,7 @@ gulp.task('server', function() {
 	});
 	app.listen(ConfExpress.port);
 	if (typeof(ConfBrowser.path) != undefined && ConfBrowser.path != '' && ConfBrowser.path != "") {
+		cp = require('child_process');
 		browser = cp.spawn(ConfBrowser.path, ['-new-tab', 'http://localhost:' + ConfExpress.port + '/']);
 	}
 	console.log('Server is running at port ' + ConfExpress.port);
