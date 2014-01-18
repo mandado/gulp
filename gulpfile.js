@@ -156,7 +156,7 @@ gulp.task(ConfHTML.taskName, function() {
 		.pipe(gulp.dest(ConfHTML.outputFolder))
 })
 
-/***
+/**
 * about image
 */
 gulp.task(ConfIMG.taskname, function () {
