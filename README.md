@@ -17,4 +17,5 @@ Task: gulp ...
 * watch -> Watch jade/stylus/scripts
 * server -> Creates a web server | Watch files
 * build -> Compile jade/stylus/scripts | optimize images | convert fonts
+* help -> Show taks (need conf. it )
 * default task -> Compile jade/stylus/scripts and run server
