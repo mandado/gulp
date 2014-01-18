@@ -229,9 +229,9 @@ gulp.task(ConfHTML.taskName, function() {
 * image
 */
 gulp.task(ConfIMG.taskname, function () {
-    gulp.src([ConfIMG.inputFolder + '.png', ConfIMG.inputFolder + '.jpg', ConfIMG.inputFolder + '.gif'])
-        .pipe(imagemin())
-        .pipe(gulp.dest(ConfIMG.outputFolder));
+	gulp.src([ConfIMG.inputFolder + '.png', ConfIMG.inputFolder + '.jpg', ConfIMG.inputFolder + '.gif'])
+        	.pipe(imagemin())
+        	.pipe(gulp.dest(ConfIMG.outputFolder));
 });
 
 /**
@@ -239,14 +239,14 @@ gulp.task(ConfIMG.taskname, function () {
 */
 gulp.task(ConfFont.taskName, function() {
 	gulp.src([ConfFont.inputFolder + '.svg'])
-    	.pipe(svg2ttf())
-    	.pipe(gulp.dest(ConfFont.folder));
+    		.pipe(svg2ttf())
+    		.pipe(gulp.dest(ConfFont.folder));
    	gulp.src([ConfFont.inputFolder +'.ttf'])
-    	.pipe(ttf2eot())
-    	.pipe(gulp.dest(ConfFont.folder));
-    gulp.src([ConfFont.inputFolder + '.ttf'])
-    	.pipe(ttf2woff())
-    	.pipe(gulp.dest(ConfFont.outputFolder));
+    		.pipe(ttf2eot())
+    		.pipe(gulp.dest(ConfFont.folder));
+	gulp.src([ConfFont.inputFolder + '.ttf'])
+    		.pipe(ttf2woff())
+    		.pipe(gulp.dest(ConfFont.outputFolder));
 });
 
 /**
@@ -254,7 +254,7 @@ gulp.task(ConfFont.taskName, function() {
 */
 gulp.task(ConfFTP.taskName, function() {
 	gulp.src(ConfFTP.inputFolder)
-        .pipe(ftp(ConfFTP));
+        	.pipe(ftp(ConfFTP));
 })
 
 /**
@@ -262,8 +262,8 @@ gulp.task(ConfFTP.taskName, function() {
 */
 gulp.task('server', function() {
 	var app = express(),
-		cp,
-		browser;
+	    cp,
+	    browser;
 
 	app.configure(function() {
 	    app.use(express.static(__dirname + ConfExpress.folder));
@@ -290,6 +290,5 @@ gulp.task('build', function() {
 * default
 */
 gulp.task('default', function() {
-	gulp.run(ConfJade.taskName, ConfJS.taskName, ConfStylus.taskName, ConfFont.taskName);
-	gulp.run('server');
+	gulp.run(ConfJade.taskName, ConfJS.taskName, ConfStylus.taskName, ConfFont.taskName,'server');
 })
