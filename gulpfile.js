@@ -204,9 +204,9 @@ gulp.task(ConfHTML.taskName, function() {
 * image
 */
 gulp.task(ConfIMG.taskname, function () {
-    gulp.src([ConfIMG.inputFolder + '.png', ConfIMG.inputFolder + '.jpg', ConfIMG.inputFolder + '.gif'])
-        .pipe(imagemin())
-        .pipe(gulp.dest(ConfIMG.outputFolder));
+    	gulp.src([ConfIMG.inputFolder + '.png', ConfIMG.inputFolder + '.jpg', ConfIMG.inputFolder + '.gif'])
+        	.pipe(imagemin())
+        	.pipe(gulp.dest(ConfIMG.outputFolder));
 });
 
 /**
