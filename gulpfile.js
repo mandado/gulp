@@ -1,5 +1,5 @@
 /************
-* Tasks: gulp ...
+* Task: gulp ...
 *
 * jade -> Compile and minify .jade
 * stylus -> Compile and minify main.styl
@@ -10,7 +10,8 @@
 * fpt -> transfer files to the server 
 * server -> Creates a web server
 * build -> Compile jade/stylus/scripts | optimize images | convert fonts
-* default -> Compile jade/stylus/scripts
+*
+* default task -> Compile jade/stylus/scripts
 *
 * ♥
 */
@@ -32,7 +33,7 @@ var gulp = require('gulp'),
 	imagemin = require('gulp-imagemin'),
 	ftp = require('gulp-ftp');
 	express = require('express');
-	
+
 /************
 * Conf. express
 *
@@ -45,10 +46,21 @@ var gulp = require('gulp'),
 */
 	var ConfExpress = {
 		port: 8080,
-		folder: 'build/',
+		folder: '/build',
 		showHiddenFiles: false,
 		icons: true,
 	};
+
+/************
+* Conf your browser
+* #1 The path of your browser | Remember to escape characters
+*	exemple: C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe
+*			 C:\\Program Files (x86)\\Mozilla Firefox\\firefox.exe
+*/
+	var ConfBrowser = {
+		path: 'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe',
+
+	}
 
 /************
 * Conf. Jade
@@ -134,8 +146,8 @@ var gulp = require('gulp'),
 /************
 * Conf. fonts
 *
-* #1 
-* #2
+* #1 Task name
+* #2 Font folder
 *
 * https://npmjs.org/package/gulp-svg2ttf
 * https://npmjs.org/package/gulp-ttf2eot
@@ -149,6 +161,10 @@ var gulp = require('gulp'),
 /************
 * Conf Ftp
 *
+* #1 Host
+* #2 USR
+* #3 PASS
+* #4 Folder to be accessed
 * https://npmjs.org/package/gulp-ftp
 */
 	var ConfFTP = {
@@ -204,24 +220,24 @@ gulp.task(ConfHTML.taskName, function() {
 * image
 */
 gulp.task(ConfIMG.taskname, function () {
-    	gulp.src([ConfIMG.inputFolder + '.png', ConfIMG.inputFolder + '.jpg', ConfIMG.inputFolder + '.gif'])
-        	.pipe(imagemin())
-        	.pipe(gulp.dest(ConfIMG.outputFolder));
+    gulp.src([ConfIMG.inputFolder + '.png', ConfIMG.inputFolder + '.jpg', ConfIMG.inputFolder + '.gif'])
+        .pipe(imagemin())
+        .pipe(gulp.dest(ConfIMG.outputFolder));
 });
 
 /**
-* fonts
+* font
 */
 gulp.task(ConfFont.taskName, function() {
 	gulp.src([ConfFont.folder + '.svg'])
-    		.pipe(svg2ttf())
-    		.pipe(gulp.dest(ConfFont.folder));
+    	.pipe(svg2ttf())
+    	.pipe(gulp.dest(ConfFont.folder));
    	gulp.src([ConfFont.folder +'.ttf'])
-    		.pipe(ttf2eot())
-    		.pipe(gulp.dest(ConfFont.folder));
-	gulp.src([ConfFont.folder + '.ttf'])
-    		.pipe(ttf2woff())
-    		.pipe(gulp.dest(ConfFont.folder));
+    	.pipe(ttf2eot())
+    	.pipe(gulp.dest(ConfFont.folder));
+    gulp.src([ConfFont.folder + '.ttf'])
+    	.pipe(ttf2woff())
+    	.pipe(gulp.dest(ConfFont.folder));
 });
 
 /**
@@ -229,19 +245,26 @@ gulp.task(ConfFont.taskName, function() {
 */
 gulp.task('ftp', function() {
 	gulp.src('./dev/*')
-        	.pipe(ftp(ConfFTP));
+        .pipe(ftp(ConfFTP));
 })
 
 /**
 * server
 */
 gulp.task('server', function() {
-	var app = express();
+	var app = express(),
+		cp = require('child_process'),
+		browser;
+
 	app.configure(function() {
 	    app.use(express.static(__dirname + ConfExpress.folder));
 	    app.use(express.directory(__dirname + ConfExpress.folder, {hidden: ConfExpress.showHiddenFiles, icons: ConfExpress.icons, filter:false}));
+	    app.use(express.errorHandler());
 	});
 	app.listen(ConfExpress.port);
+	if (typeof(ConfBrowser.path) != undefined && ConfBrowser.path != '' && ConfBrowser.path != "") {
+		browser = cp.spawn(ConfBrowser.path, ['-new-tab', 'http://localhost:' + ConfExpress.port + '/']);
+	}
 	console.log('Server is running at port ' + ConfExpress.port);
 });
 
