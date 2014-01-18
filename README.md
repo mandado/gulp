@@ -1,6 +1,6 @@
 Gulp Helper
 ====
-![alt tag](http://s28.postimg.org/bf590ks4d/gulp.png)
+->![alt tag](http://s28.postimg.org/bf590ks4d/gulp.png)<-
 
 An initial configuration for your project with gulp
 
@@ -17,5 +17,5 @@ Task: gulp ...
 * server -> Creates a web server
 * build -> Compile jade/stylus/scripts | optimize images | convert fonts
 * watch -> Watch jade/stylus/scripts and compile
-
+* help -> To see all tasks:
 * default task -> Compile jade/stylus/scripts and run server
