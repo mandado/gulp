@@ -179,7 +179,7 @@ var gulp = require('gulp'),
             host: '',
             user: '',
             pass: '',
-            remotePath: '/'
+            remotePath: '/',
             inputFolder: './build/*'
         }
 
@@ -291,4 +291,4 @@ gulp.task('build', function() {
 */
 gulp.task('default', function() {
 	gulp.run(ConfJade.taskName, ConfJS.taskName, ConfStylus.taskName, ConfFont.taskName,'server');
-})
+});
