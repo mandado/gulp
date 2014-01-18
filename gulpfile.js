@@ -7,12 +7,11 @@
 * minify-html -> compress html, remove comments and empty attributes
 * minify-img -> optimize png/gif/jpg
 * font -> svg to ttf | tff to eot | ttf to woff
-* fpt -> transfer files to the server 
-* server -> Creates a web server
+* fpt -> transfer files to the server
+* watch -> Watch jade/stylus/scripts
+* server -> Creates a web server | Watch files
 * build -> Compile jade/stylus/scripts | optimize images | convert fonts
-*
 * default task -> Compile jade/stylus/scripts and run server
-*
 */
 
 /************
@@ -254,7 +253,23 @@ gulp.task(ConfFont.taskName, function() {
 gulp.task(ConfFTP.taskName, function() {
 	gulp.src(ConfFTP.inputFolder)
         	.pipe(ftp(ConfFTP));
-})
+});
+
+/**
+* watch
+*/
+gulp.task('watch', function() {
+	gulp.watch(ConfJade.inputFolder, function() {
+		gulp.run(ConfJade.taskName);
+	});
+	gulp.watch(ConfStylus.inputFolder + '.styl', function() {
+		gulp.run(ConfStylus.taskName);
+	});
+	gulp.watch(ConfJS.inputFolder, function() {
+		gulp.run(ConfJS.taskName);
+	});
+	console.log('Gulp is watching!');
+});
 
 /**
 * server
@@ -274,6 +289,7 @@ gulp.task('server', function() {
 		cp = require('child_process');
 		browser = cp.spawn(ConfBrowser.path, ['-new-tab', 'http://localhost:' + ConfExpress.port + '/']);
 	}
+	gulp.run('watch');
 	console.log('Server is running at port ' + ConfExpress.port);
 });
 
@@ -283,6 +299,13 @@ gulp.task('server', function() {
 gulp.task('build', function() {
 	gulp.run(ConfJade.taskName, ConfJS.taskName, ConfStylus.taskName, ConfIMG.taskname, ConfFont.taskName);
 	console.log('Build Complete!');
+});
+
+/**
+* help
+*/
+gulp.task('help', function() {
+	console.log('Task: gulp.. \njade -> Compile and minify .jade \nstylus -> Compile and minify main.styl \nscripts -> Concat and uglify .js\nminify-html -> compress html, remove comments and empty attributes\nminify-img -> optimize png/gif/jpg\nfont -> svg to ttf | tff to eot | ttf to woff\nfpt -> transfer files to the server\nserver -> Creates a web server\nbuild -> Compile jade/stylus/scripts | optimize images | convert fonts\ndefault task -> Compile jade/stylus/scripts and run server');
 });
 
 /**
